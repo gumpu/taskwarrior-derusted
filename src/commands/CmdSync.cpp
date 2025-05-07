@@ -83,6 +83,8 @@ int CmdSync::execute(std::string& output) {
   std::regex remove_creds_regex("^(https?://.+):(.+)@(.+)");
   std::string safe_server_url = std::regex_replace(server_url, remove_creds_regex, "$1:****@$3");
 
+  auto num_local_operations = replica->num_local_operations();
+
   if (server_dir != "") {
     if (verbose) {
       out << format("Syncing with {1}", server_dir) << '\n';
@@ -135,6 +137,7 @@ int CmdSync::execute(std::string& output) {
       replica->sync_to_aws_with_default_creds(aws_region, aws_bucket, encryption_secret,
                                               avoid_snapshots);
     }
+
   } else if (gcp_bucket != "") {
     std::string gcp_credential_path = Context::getContext().config.get("sync.gcp.credential_path");
     if (encryption_secret == "") {
@@ -144,6 +147,7 @@ int CmdSync::execute(std::string& output) {
       out << format("Syncing with GCP bucket {1}", gcp_bucket) << '\n';
     }
     replica->sync_to_gcp(gcp_bucket, gcp_credential_path, encryption_secret, avoid_snapshots);
+
   } else if (server_url != "") {
     if (client_id == "" || encryption_secret == "") {
       throw std::string("sync.server.client_id and sync.encryption_secret are required");
@@ -153,12 +157,22 @@ int CmdSync::execute(std::string& output) {
     }
     replica->sync_to_remote(server_url, tc::uuid_from_string(client_id), encryption_secret,
                             avoid_snapshots);
+
   } else {
     throw std::string("No sync.* settings are configured. See task-sync(5).");
   }
 
   if (context.config.getBoolean("purge.on-sync")) {
     context.tdb2.expire_tasks();
+  }
+
+  if (verbose) {
+    out << "Success!\n";
+    // Taskchampion does not provide a measure of the number of operations received from
+    // the server, but we can give some indication of the number sent.
+    if (num_local_operations) {
+      out << format("Sent {1} local operations to the server", num_local_operations) << '\n';
+    }
   }
 
   output = out.str();
