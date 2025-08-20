@@ -18,7 +18,7 @@ if (ENABLE_WASM)
   set(CMAKE_EXECUTABLE_SUFFIX ".js")
 endif (ENABLE_WASM)
 
-OPTION (ENABLE_SYNC "Enable 'task sync' support" ON)
+OPTION (ENABLE_SYNC "Enable 'task sync' support" OFF)
 
 if (ENABLE_SYNC)
   set (USE_GNUTLS ON CACHE BOOL "Build gnutls support." FORCE)
@@ -49,7 +49,7 @@ endif (EXISTS ${CMAKE_SOURCE_DIR}/.git/index)
 
 set (PACKAGE "${PROJECT_NAME}")
 set (VERSION "${PROJECT_VERSION}")
-set (PACKAGE_BUGREPORT "support@gothenburgbitfactory.org")
+set (PACKAGE_BUGREPORT "none@nowhere.nowhere")
 set (PACKAGE_NAME "${PACKAGE}")
 set (PACKAGE_TARNAME "${PACKAGE}")
 set (PACKAGE_VERSION "${VERSION}")
