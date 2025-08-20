@@ -1,7 +1,7 @@
 ## About
 
 This is a fork of
-[Taskwarrior](https://github.com/GothenburgBitFactory/taskwarrior/) with with
+[Taskwarrior](https://github.com/GothenburgBitFactory/taskwarrior/) with
 all the 3.x code removed.
 It is for my own purposed as I don't use syncing and do
 not like the additional dependency on Rust.
